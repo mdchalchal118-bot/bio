@@ -3,16 +3,13 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        #display { width: 90%; max-width: 400px; min-height: 100px; background: #121212; padding: 15px; border-radius: 12px; border: 1px solid #333; font-size: 18px; white-space: pre-wrap; }
-        .cursor { display: inline-block; width: 8px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; }
+        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        #display { width: 90%; max-width: 400px; min-height: 50px; background: #121212; padding: 15px; border-radius: 12px; border: 1px solid #333; font-size: 18px; white-space: pre-wrap; word-wrap: break-word; }
+        .cursor { display: inline-block; width: 8px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; vertical-align: middle; }
         @keyframes blink { 50% { opacity: 0; } }
-        
-        /* বাটনগুলো একদম নিচে এবং ছোট */
-        .bottom-controls { position: fixed; bottom: 20px; display: flex; gap: 10px; }
-        .btn { padding: 8px 15px; border-radius: 20px; border: none; background: #333; color: white; cursor: pointer; font-size: 12px; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); flex-direction: column; justify-content: center; align-items: center; }
+        .bottom-controls { position: fixed; bottom: 10px; display: flex; gap: 10px; }
+        .btn { padding: 5px 12px; border-radius: 50%; border: none; background: #333; color: white; font-size: 14px; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
@@ -21,37 +18,33 @@
 
 <div class="bottom-controls">
     <button class="btn" onclick="document.getElementById('myModal').style.display='flex'">✎</button>
-    <button class="btn" onclick="startTyping()">▶</button>
+    <button class="btn" onclick="processAndType()">▶</button>
 </div>
 
 <div id="myModal" class="modal">
     <textarea id="inputField" style="width:80%; height:150px; background:#222; color:white; padding:10px;"></textarea>
-    <button class="btn" style="margin-top:10px; background:#fe2c55;" onclick="saveBio()">Save</button>
+    <button class="btn" style="background:#fe2c55; width:80%; margin-top:10px;" onclick="document.getElementById('myModal').style.display='none'">Save</button>
 </div>
 
 <script>
-    let finalBio = "";
-    function saveBio() {
-        finalBio = document.getElementById('inputField').value;
-        document.getElementById('myModal').style.display = 'none';
-    }
-
-    function startTyping() {
+    function processAndType() {
+        let rawText = document.getElementById('inputField').value;
         const display = document.getElementById('display');
         display.innerHTML = '<span class="cursor"></span>';
-        let i = 0;
         
+        // ট্যাগ ফরম্যাটিং
+        let formatted = rawText
+            .replace(/\[b\]/g, '<b>')
+            .replace(/\[\/b\]/g, '</b>')
+            .replace(/\[red\]/g, '<span style="color:#ff4d4d;">')
+            .replace(/\[\/red\]/g, '</span>');
+
+        let i = 0;
         function type() {
-            if (i < finalBio.length) {
-                let char = finalBio[i];
-                // কালার এবং বোল্ড ফরম্যাটিং লজিক
-                let formattedChar = char;
-                if(finalBio.includes("[red]")) formattedChar = `<span style="color:red;">${char}</span>`;
-                if(finalBio.includes("[b]")) formattedChar = `<b>${char}</b>`;
-                
-                display.innerHTML = finalBio.substring(0, i) + formattedChar + '<span class="cursor"></span>';
+            if (i <= formatted.length) {
+                display.innerHTML = formatted.substring(0, i) + '<span class="cursor"></span>';
                 i++;
-                setTimeout(type, Math.random() * 100 + 50);
+                setTimeout(type, Math.random() * 100 + 30);
             }
         }
         type();
