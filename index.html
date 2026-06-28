@@ -1,57 +1,54 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio Editor</title>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .tiktok-container { width: 90%; max-width: 400px; background: #121212; padding: 20px; border-radius: 12px; border: 1px solid #333; }
-        
-        #display { 
-            min-height: 100px; background: #1e1e1e; padding: 15px; border-radius: 8px; 
-            border: 1px solid #444; font-size: 18px; white-space: pre-wrap; word-wrap: break-word; 
-        }
-        
-        /* কিবোর্ড কাসর এনিমেশন */
+        #display { width: 90%; max-width: 400px; min-height: 120px; background: #121212; padding: 15px; border-radius: 12px; border: 1px solid #333; font-size: 18px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; }
         .cursor { display: inline-block; width: 8px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; vertical-align: middle; }
         @keyframes blink { 50% { opacity: 0; } }
         
-        .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
-        textarea { width: 100%; height: 80px; background: #222; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; }
-        button { padding: 10px; background: #fe2c55; border: none; color: #fff; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        /* বাটনগুলো একদম নিচে ছোট করে রাখা */
+        .bottom-controls { position: fixed; bottom: 15px; display: flex; gap: 15px; z-index: 1000; }
+        .btn-circle { width: 40px; height: 40px; border-radius: 50%; border: none; background: #333; color: white; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
-<div class="tiktok-container">
-    <div style="font-size: 20px; margin-bottom: 10px;">Bio</div>
-    <div id="display"><span class="cursor"></span></div>
-    
-    <div class="controls">
-        <textarea id="inputField" placeholder="এখানে আপনার লেখা লিখুন..."></textarea>
-        <button onclick="startTyping()">Start Typing</button>
-    </div>
+<div id="display"><span class="cursor"></span></div>
+
+<div class="bottom-controls">
+    <button class="btn-circle" onclick="document.getElementById('myModal').style.display='flex'">✎</button>
+    <button class="btn-circle" onclick="startTyping()">▶</button>
+</div>
+
+<div id="myModal" class="modal">
+    <textarea id="inputField" placeholder="এখানে আপনার বায়ো লিখুন..." style="width:80%; height:150px; background:#222; color:white; padding:10px; border-radius:10px;"></textarea>
+    <button style="margin-top:10px; padding:10px 30px; background:#fe2c55; border:none; color:white; border-radius:20px;" onclick="document.getElementById('myModal').style.display='none'">Save</button>
 </div>
 
 <script>
     function startTyping() {
         const text = document.getElementById('inputField').value;
         const display = document.getElementById('display');
-        display.innerHTML = ""; // আগের লেখা মুছে নতুন করে শুরু
+        display.innerHTML = '<span class="cursor"></span>';
         
+        // কালার এবং ফরম্যাটিং লজিক
+        let processedText = text
+            .replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
+            .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
+            .replace(/\[c\]/g, '<center>').replace(/\[\/c\]/g, '</center>')
+            .replace(/\[#([0-9A-Fa-f]{6})\]/g, '<span style="color:#$1;">').replace(/\[\/color\]/g, '</span>');
+
         let i = 0;
         function type() {
-            if (i < text.length) {
-                // প্রতিবার অক্ষর যোগ করার সময় কার্সরটি শেষে রাখা
-                display.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+            if (i <= processedText.length) {
+                display.innerHTML = processedText.substring(0, i) + '<span class="cursor"></span>';
                 i++;
-                // টাইপিংয়ের গতি (মানুষের মতো ন্যাচারাল করার জন্য র‍্যান্ডম টাইম)
-                let speed = Math.random() * 100 + 50; 
-                setTimeout(type, speed);
-            } else {
-                // শেষ হওয়ার পর কার্সর সরিয়ে ফেলা বা রাখা
-                display.innerHTML = text + '<span class="cursor"></span>';
+                // ন্যাচারাল টাইপিং গতির জন্য র‍্যান্ডম টাইম (৮০-১৫০ মি.সে.)
+                setTimeout(type, Math.random() * 70 + 80);
             }
         }
         type();
