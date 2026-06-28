@@ -4,48 +4,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .tiktok-container { width: 90%; max-width: 400px; background: #121212; padding: 15px; border-radius: 12px; border: 1px solid #333; }
-        .header { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; }
-        
-        #display { 
-            min-height: 80px; background: #1e1e1e; padding: 12px; border-radius: 8px; 
-            border: 1px solid #444; font-size: 16px; white-space: pre-wrap; word-wrap: break-word; 
-        }
+        .tiktok-container { width: 90%; max-width: 400px; background: #121212; padding: 15px; border-radius: 12px; border: 1px solid #333; position: relative; }
+        #display { min-height: 80px; background: #1e1e1e; padding: 12px; border-radius: 8px; border: 1px solid #444; font-size: 16px; white-space: pre-wrap; word-wrap: break-word; }
         .cursor { display: inline-block; width: 8px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         
-        /* কন্ট্রোল এরিয়া একদম ছোট করে নিচে রাখা */
-        .controls { margin-top: 10px; opacity: 0.3; transition: opacity 0.3s; }
-        .controls:hover { opacity: 1; } /* মাউস নিলে দেখা যাবে */
-        textarea { width: 100%; height: 50px; background: #222; color: #fff; border: 1px solid #444; font-size: 12px; }
-        button { width: 100%; padding: 5px; background: #fe2c55; border: none; color: #fff; cursor: pointer; }
+        /* পপ-আপ মোডাল (লুকানো থাকবে) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+        .modal-content { background: #1e1e1e; padding: 20px; border-radius: 10px; width: 80%; }
+        
+        /* বাটন স্টাইল */
+        .btn { margin-top: 10px; padding: 10px; background: #fe2c55; border: none; color: white; border-radius: 5px; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
 
 <div class="tiktok-container">
-    <div class="header"><div>Cancel</div><div style="color:red">Save</div></div>
     <div style="font-size: 18px; margin-bottom: 10px;">Bio</div>
-    <div id="display"><span class="cursor"></span></div>
+    <div id="display"></div>
     
-    <div class="controls">
-        <textarea id="inputField" placeholder="লিখুন..."></textarea>
-        <button onclick="startTyping()">Start</button>
+    <button class="btn" onclick="document.getElementById('myModal').style.display='flex'">+ বায়ো সেট করুন</button>
+    <button id="startBtn" class="btn" style="display:none; background:#333;" onclick="startTyping()">Start Typing</button>
+</div>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <textarea id="inputField" style="width:100%; height:100px; background:#222; color:white;"></textarea>
+        <button class="btn" onclick="saveBio()">Save</button>
     </div>
 </div>
 
 <script>
+    let finalBio = "";
+    function saveBio() {
+        finalBio = document.getElementById('inputField').value;
+        document.getElementById('myModal').style.display = 'none';
+        document.getElementById('startBtn').style.display = 'block';
+    }
+
     function startTyping() {
-        const text = document.getElementById('inputField').value;
         const display = document.getElementById('display');
-        display.innerHTML = ""; 
+        display.innerHTML = '<span class="cursor"></span>';
         let i = 0;
         function type() {
-            if (i < text.length) {
-                display.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+            if (i < finalBio.length) {
+                display.innerHTML = finalBio.substring(0, i + 1) + '<span class="cursor"></span>';
                 i++;
-                let speed = Math.random() * 150 + 50; 
-                setTimeout(type, speed);
+                setTimeout(type, Math.random() * 150 + 50);
             }
         }
         type();
