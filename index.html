@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@rdx_lala1 Bio</title>
     <style>
-        body { background: #000; color: #fff; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding-top: 50px; }
+        body { background: #000; color: #fff; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding-top: 20px; }
+        
+        /* আইডির নাম ব্যানার */
+        .banner { font-size: 24px; font-weight: bold; color: #fe2c55; margin-bottom: 15px; }
+        
         #display { 
             width: 90%; max-width: 400px; min-height: 250px; background: #121212; padding: 20px; 
             border-radius: 12px; border: 1px solid #333; font-size: 18px; 
-            text-align: left; /* বাম দিক থেকে শুরু */
-            white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+            text-align: left; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
         }
-        /* কার্সর চিকন করা হয়েছে */
+        
+        /* চিকন কার্সর */
         .cursor { display: inline-block; width: 2px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; vertical-align: middle; margin-left: 2px; }
         @keyframes blink { 50% { opacity: 0; } }
+        
+        /* নিচের ক্যাপশন */
+        .footer-text { font-size: 13px; color: #777; margin-top: 10px; text-align: center; width: 90%; }
         
         .controls { position: fixed; bottom: 20px; display: flex; gap: 20px; }
         .btn-circle { width: 50px; height: 50px; border-radius: 50%; border: none; background: #333; color: white; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; }
@@ -21,7 +30,11 @@
 </head>
 <body>
 
+<div class="banner">@rdx_lala1</div>
+
 <div id="display"><span class="cursor"></span></div>
+
+<div class="footer-text">আমাদের ক্যাপশন পড়ে ভালো লাগলে অবশ্যই লাইক, কমেন্ট ও শেয়ার করবেন। ধন্যবাদ!</div>
 
 <div class="controls">
     <button class="btn-circle" onclick="document.getElementById('modal').style.display='flex'">✎</button>
@@ -29,7 +42,7 @@
 </div>
 
 <div id="modal" class="modal">
-    <textarea id="inputField" placeholder="[b]বোল্ড[/b] [#ff0000]লাল লেখা[/color]" style="width:80%; height:150px; background:#222; color:white; padding:15px; border-radius:10px; border:1px solid #444;"></textarea>
+    <textarea id="inputField" placeholder="[b]বোল্ড[/b] [#ff0000]লাল রং[/color]" style="width:80%; height:150px; background:#222; color:white; padding:15px; border-radius:10px; border:1px solid #444;"></textarea>
     <button style="margin-top:20px; padding:10px 40px; background:#fe2c55; border:none; color:white; border-radius:25px;" onclick="saveAndClose()">Save</button>
 </div>
 
@@ -43,8 +56,6 @@
 
     function startTyping() {
         const display = document.getElementById('display');
-        
-        // ট্যাগ ফরম্যাটিং
         let htmlContent = savedText
             .replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
             .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
@@ -56,10 +67,8 @@
         
         function type() {
             if (i <= htmlContent.length) {
-                // কিবোর্ড টাইপিংয়ের মতো অক্ষর যোগ হবে
                 display.innerHTML = htmlContent.substring(0, i) + '<span class="cursor"></span>';
                 i++;
-                // ন্যাচারাল স্পিড: র্যান্ডমলি ৮০ থেকে ১৫০ মিলিসেকেন্ড
                 setTimeout(type, Math.random() * 70 + 80); 
             }
         }
