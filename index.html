@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Editor</title>
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        #display { width: 90%; max-width: 400px; min-height: 150px; background: #121212; padding: 20px; border-radius: 12px; border: 1px solid #333; font-size: 18px; word-wrap: break-word; line-height: 1.6; }
-        .cursor { display: inline-block; width: 8px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; vertical-align: middle; }
+        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding-top: 50px; }
+        
+        #display { 
+            width: 90%; max-width: 400px; min-height: 200px; background: #121212; padding: 20px; 
+            border-radius: 12px; border: 1px solid #333; font-size: 18px; 
+            text-align: left; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+        }
+        
+        .cursor { display: inline-block; width: 8px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; vertical-align: middle; margin-left: 2px; }
         @keyframes blink { 50% { opacity: 0; } }
         
-        /* বাটনগুলো নিচের দিকে */
-        .controls { position: fixed; bottom: 20px; display: flex; gap: 15px; }
-        .btn-circle { width: 45px; height: 45px; border-radius: 50%; border: none; background: #333; color: white; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; flex-direction: column; }
+        .controls { position: fixed; bottom: 20px; display: flex; gap: 20px; }
+        .btn-circle { width: 50px; height: 50px; border-radius: 50%; border: none; background: #333; color: white; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; flex-direction: column; z-index: 2000; }
     </style>
 </head>
 <body>
@@ -24,41 +32,41 @@
 </div>
 
 <div id="modal" class="modal">
-    <textarea id="inputField" style="width:80%; height:150px; background:#222; color:white; padding:10px; border-radius:10px; border:1px solid #444;"></textarea>
-    <button style="margin-top:15px; padding:10px 40px; background:#fe2c55; border:none; color:white; border-radius:20px; font-weight:bold;" onclick="saveAndClose()">Save</button>
+    <textarea id="inputField" placeholder="এখানে আপনার লেখা লিখুন... [b]বোল্ড[/b] [#ff0000]লাল রং[/color]" style="width:80%; height:150px; background:#222; color:white; padding:15px; border-radius:10px; border:1px solid #444; font-size: 16px;"></textarea>
+    <button style="margin-top:20px; padding:12px 40px; background:#fe2c55; border:none; color:white; border-radius:25px; font-weight:bold; cursor:pointer;" onclick="saveAndClose()">Save</button>
 </div>
 
 <script>
     let savedText = "";
-
+    
     function saveAndClose() {
-        // টেক্সট এরিয়া থেকে লেখাটি সেভ করে নিচ্ছে
         savedText = document.getElementById('inputField').value;
         document.getElementById('modal').style.display = 'none';
-        
-        // সেভ করার সাথে সাথে ডিসপ্লে খালি করে কার্সর দেখাচ্ছে
         document.getElementById('display').innerHTML = '<span class="cursor"></span>';
     }
 
     function startTyping() {
         const display = document.getElementById('display');
         
-        // ট্যাগগুলোকে HTML-এ রূপান্তর
+        // কালার এবং ফরম্যাটিং ট্যাগ প্রসেসিং
         let htmlContent = savedText
             .replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
             .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
-            .replace(/\[c\]/g, '<center>').replace(/\[\/c\]/g, '</center>')
-            .replace(/\[#([0-9A-Fa-f]{6})\]/g, '<span style="color:#$1;">').replace(/\[\/color\]/g, '</span>');
+            .replace(/\[c\]/g, '<div style="text-align:center;">').replace(/\[\/c\]/g, '</div>')
+            // কালার কোড: [#RRGGBB] ফরম্যাট
+            .replace(/\[#([0-9A-Fa-f]{6})\]/g, '<span style="color:#$1;">')
+            .replace(/\[\/color\]/g, '</span>');
 
         let i = 0;
-        display.innerHTML = '<span class="cursor"></span>'; // রিসেট
+        display.innerHTML = '<span class="cursor"></span>';
         
         function type() {
             if (i <= htmlContent.length) {
-                // কিবোর্ড টাইপিং স্টাইলে অক্ষর যোগ করা
+                // অক্ষর বাই অক্ষর টাইপিং
                 display.innerHTML = htmlContent.substring(0, i) + '<span class="cursor"></span>';
                 i++;
-                setTimeout(type, Math.random() * 60 + 50); 
+                // টাইপিং স্পিড (ন্যাচারাল ফিল দেওয়ার জন্য র‍্যান্ডম স্পিড)
+                setTimeout(type, Math.random() * 80 + 70); 
             }
         }
         type();
