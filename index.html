@@ -4,14 +4,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        #display { width: 90%; max-width: 400px; min-height: 120px; background: #121212; padding: 15px; border-radius: 12px; border: 1px solid #333; font-size: 18px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; }
+        #display { width: 90%; max-width: 400px; min-height: 150px; background: #121212; padding: 20px; border-radius: 12px; border: 1px solid #333; font-size: 18px; word-wrap: break-word; line-height: 1.6; }
         .cursor { display: inline-block; width: 8px; height: 18px; background: #fe2c55; animation: blink 0.8s infinite; vertical-align: middle; }
         @keyframes blink { 50% { opacity: 0; } }
         
-        /* বাটনগুলো একদম নিচে ছোট করে রাখা */
-        .bottom-controls { position: fixed; bottom: 15px; display: flex; gap: 15px; z-index: 1000; }
-        .btn-circle { width: 40px; height: 40px; border-radius: 50%; border: none; background: #333; color: white; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
-        
+        .controls { position: fixed; bottom: 20px; display: flex; gap: 15px; }
+        .btn-circle { width: 45px; height: 45px; border-radius: 50%; border: none; background: #333; color: white; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
     </style>
 </head>
@@ -19,14 +17,14 @@
 
 <div id="display"><span class="cursor"></span></div>
 
-<div class="bottom-controls">
+<div class="controls">
     <button class="btn-circle" onclick="document.getElementById('myModal').style.display='flex'">✎</button>
     <button class="btn-circle" onclick="startTyping()">▶</button>
 </div>
 
-<div id="myModal" class="modal">
-    <textarea id="inputField" placeholder="এখানে আপনার বায়ো লিখুন..." style="width:80%; height:150px; background:#222; color:white; padding:10px; border-radius:10px;"></textarea>
-    <button style="margin-top:10px; padding:10px 30px; background:#fe2c55; border:none; color:white; border-radius:20px;" onclick="document.getElementById('myModal').style.display='none'">Save</button>
+<div id="modal" class="modal" style="display:none;">
+    <textarea id="inputField" placeholder="[b][i][c] [#FF0000]আপনার লেখা..." style="width:80%; height:150px; background:#222; color:white; padding:10px; border-radius:10px;"></textarea>
+    <button style="margin-top:10px; padding:10px 30px; background:#fe2c55; border:none; color:white; border-radius:20px;" onclick="document.getElementById('modal').style.display='none'">Save</button>
 </div>
 
 <script>
@@ -35,8 +33,8 @@
         const display = document.getElementById('display');
         display.innerHTML = '<span class="cursor"></span>';
         
-        // কালার এবং ফরম্যাটিং লজিক
-        let processedText = text
+        // সব ট্যাগকে সরাসরি HTML-এ রূপান্তর
+        let htmlContent = text
             .replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
             .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
             .replace(/\[c\]/g, '<center>').replace(/\[\/c\]/g, '</center>')
@@ -44,11 +42,11 @@
 
         let i = 0;
         function type() {
-            if (i <= processedText.length) {
-                display.innerHTML = processedText.substring(0, i) + '<span class="cursor"></span>';
+            if (i <= htmlContent.length) {
+                // এইচটিএমএল ট্যাগগুলো একসাথে ইনজেক্ট করে অক্ষরের পর অক্ষর টাইপ হবে
+                display.innerHTML = htmlContent.substring(0, i) + '<span class="cursor"></span>';
                 i++;
-                // ন্যাচারাল টাইপিং গতির জন্য র‍্যান্ডম টাইম (৮০-১৫০ মি.সে.)
-                setTimeout(type, Math.random() * 70 + 80);
+                setTimeout(type, Math.random() * 60 + 50); // ন্যাচারাল কিবোর্ড টাইপিং স্পিড
             }
         }
         type();
